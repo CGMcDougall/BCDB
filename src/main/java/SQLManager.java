@@ -1,3 +1,4 @@
+import local.locInfo;
 
 public class SQLManager {
 
