@@ -1,22 +1,23 @@
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class Information {
 
-    private String color;
-    private String make;
+    private String model;
     private String type;
     private String primColor;
     private String detailColor;
     private String tarpColor;
-    private String numSails;
-    private String numMasts;
+    private int numSails;
+    private int numMasts;
     private String desc;
     private String add1;
     private String add2;
 
-    public Information(String color, String make, String type, String primColor, String detailColor,
-                String tarpColor, String numSails, String numMasts, String desc,
+    public Information(String model, String type, String primColor, String detailColor,
+                String tarpColor, int numSails, int numMasts, String desc,
                 String add1, String add2) {
-        this.color = color;
-        this.make = make;
+        this.model = model;
         this.type = type;
         this.primColor = primColor;
         this.detailColor = detailColor;
@@ -27,23 +28,30 @@ public class Information {
         this.add1 = add1;
         this.add2 = add2;
     }
+    public Information(ResultSet r) throws SQLException {
+        this.model = r.getString(2);
+        this.type = r.getString(3);
+        this.primColor = r.getString(4);
+        this.detailColor = r.getString(5);
+        this.tarpColor = r.getString(6);
+        this.numSails = r.getInt(7);
+        this.numMasts = r.getInt(8);
+        this.desc = r.getString(9);
+        this.add1 = r.getString(10);
+        this.add2 = r.getString(11);
+
+    }
+
 
 
     // Getters and Setters
-    public String getColor() {
-        return color;
+
+    public String getmodel() {
+        return model;
     }
 
-    public void setColor(String color) {
-        this.color = color;
-    }
-
-    public String getMake() {
-        return make;
-    }
-
-    public void setMake(String make) {
-        this.make = make;
+    public void setmodel(String model) {
+        this.model = model;
     }
 
     public String getType() {
@@ -78,19 +86,19 @@ public class Information {
         this.tarpColor = tarpColor;
     }
 
-    public String getNumSails() {
+    public int getNumSails() {
         return numSails;
     }
 
-    public void setNumSails(String numSails) {
+    public void setNumSails(int numSails) {
         this.numSails = numSails;
     }
 
-    public String getNumMasts() {
+    public int getNumMasts() {
         return numMasts;
     }
 
-    public void setNumMasts(String numMasts) {
+    public void setNumMasts(int numMasts) {
         this.numMasts = numMasts;
     }
 
@@ -117,6 +125,22 @@ public class Information {
     public void setAdd2(String add2) {
         this.add2 = add2;
     }
+
+    public String printBoatDetails() {
+        String details = "Model: " + this.model + "\n" +
+                "Type: " + this.type + "\n" +
+                "Primary Color: " + this.primColor + "\n" +
+                "Detail Color: " + this.detailColor + "\n" +
+                "Tarp Color: " + this.tarpColor + "\n" +
+                "Number of Sails: " + this.numSails + "\n" +
+                "Number of Masts: " + this.numMasts + "\n" +
+                "Description: " + this.desc + "\n" +
+                "Additional Info 1: " + this.add1 + "\n" +
+                "Additional Info 2: " + this.add2;
+        return details;
+
+    }
+
 }
 
 

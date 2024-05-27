@@ -46,7 +46,7 @@ public class main {
                 String add2 = in.nextLine();
 
                 ResultSet r = sql.getBoat(model, len, type, primColor, detailColor, tarpColor, numSails, numMasts, desc, add1, add2);
-
+                 sql.printResultSet(r);
             }
             catch (Exception e){
                 in.nextLine();
