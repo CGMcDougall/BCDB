@@ -12,6 +12,7 @@ public class Ownership {
     java.sql.Date ownedTo;
 
     public Ownership(ResultSet r) throws SQLException {
+        r.next();
         this.id = r.getInt(1);
         this.boatId = r.getString(2);
         this.ownerId = r.getInt(3);

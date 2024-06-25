@@ -10,16 +10,19 @@ public class Notice {
     //NoticeType
 
     String incidentNumber;
+    String type;
     java.sql.Date dateOfIssue;
 
 
     public Notice(ResultSet r) throws SQLException {
+        r.next();
         this.id = r.getInt(1);
         this.boatId = r.getString(2);
         this.ownerId = r.getInt(3);
         this.g = Group.valueOf(r.getString(4));
-        this.incidentNumber = r.getString(5);
-        this.dateOfIssue = r.getDate(6);
+        this.type = r.getString(5);
+        this.incidentNumber = r.getString(6);
+        this.dateOfIssue = r.getDate(7);
     }
 
 
@@ -28,9 +31,10 @@ public class Notice {
                         "Boat ID: %s\n" +
                         "Owner ID: %d\n" +
                         "Group: %s\n" +
+                        "Type: %s\n" +
                         "Incident Number: %s\n" +
                         "Date of Issue: %s\n",
-                id, boatId, ownerId, g, incidentNumber, formatDate(dateOfIssue));
+                id, boatId, ownerId, g,type, incidentNumber, formatDate(dateOfIssue));
     }
 
     // Helper method to format date

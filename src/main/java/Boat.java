@@ -1,4 +1,5 @@
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 public class Boat {
@@ -19,6 +20,12 @@ public class Boat {
         HIN = hin;
     }
 
+    public Boat(ResultSet r) throws SQLException {
+        r.next();
+        ID = r.getString(1);
+        HIN = r.getString(2);
+    }
+
     public void setInfo(ResultSet r) {
         try{
             Information i = new Information(r);
@@ -28,6 +35,9 @@ public class Boat {
         }
         //this.info = new Information(r);
     }
+
+    public void setInfo(Information i){ info = i;}
+
 
     public boolean loadPermits(ResultSet r){
         try{

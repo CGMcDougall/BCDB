@@ -3,7 +3,9 @@ import java.sql.SQLException;
 
 public class Information {
 
+    private String id;
     private String model;
+    private float len;
     private String type;
     private String primColor;
     private String detailColor;
@@ -14,10 +16,11 @@ public class Information {
     private String add1;
     private String add2;
 
-    public Information(String model, String type, String primColor, String detailColor,
+    public Information(String model, float len, String type, String primColor, String detailColor,
                 String tarpColor, int numSails, int numMasts, String desc,
                 String add1, String add2) {
         this.model = model;
+        this.len = len;
         this.type = type;
         this.primColor = primColor;
         this.detailColor = detailColor;
@@ -29,22 +32,30 @@ public class Information {
         this.add2 = add2;
     }
     public Information(ResultSet r) throws SQLException {
+        //r.next();
+        this.id = r.getString(1);
         this.model = r.getString(2);
-        this.type = r.getString(3);
-        this.primColor = r.getString(4);
-        this.detailColor = r.getString(5);
-        this.tarpColor = r.getString(6);
-        this.numSails = r.getInt(7);
-        this.numMasts = r.getInt(8);
-        this.desc = r.getString(9);
-        this.add1 = r.getString(10);
-        this.add2 = r.getString(11);
+        this.len = r.getFloat(3);
+        this.type = r.getString(4);
+        this.primColor = r.getString(5);
+        this.detailColor = r.getString(6);
+        this.tarpColor = r.getString(7);
+        this.numSails = r.getInt(8);
+        this.numMasts = r.getInt(9);
+        this.desc = r.getString(10);
+        //this.add1 = r.getString(11);
+        //this.add2 = r.getString(12);
 
     }
 
 
 
     // Getters and Setters
+
+
+    public String getId() {
+        return id;
+    }
 
     public String getmodel() {
         return model;
@@ -128,6 +139,7 @@ public class Information {
 
     public String printBoatDetails() {
         String details = "Model: " + this.model + "\n" +
+                "Length: " + this.len + "\n" +
                 "Type: " + this.type + "\n" +
                 "Primary Color: " + this.primColor + "\n" +
                 "Detail Color: " + this.detailColor + "\n" +
