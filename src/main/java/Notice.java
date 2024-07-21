@@ -14,6 +14,16 @@ public class Notice {
     java.sql.Date dateOfIssue;
 
 
+
+    public Notice(String boatId, int ownerId, Group g, String type, String incidentNumber, java.sql.Date d){
+        this.boatId = boatId;
+        this.ownerId = ownerId;
+        this.g = g;
+        this.type = type;
+        this.incidentNumber = incidentNumber;
+        this.dateOfIssue = d;
+    }
+
     public Notice(ResultSet r) throws SQLException {
         r.next();
         this.id = r.getInt(1);
@@ -41,6 +51,41 @@ public class Notice {
     private String formatDate(java.sql.Date date) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         return sdf.format(date);
+    }
+
+
+    public int getId() {
+        return id;
+    }
+
+    // Getter for boatId
+    public String getBoatId() {
+        return boatId;
+    }
+
+    // Getter for ownerId
+    public int getOwnerId() {
+        return ownerId;
+    }
+
+    // Getter for g
+    public Group getGroup() {
+        return g;
+    }
+
+    // Getter for incidentNumber
+    public String getIncidentNumber() {
+        return incidentNumber;
+    }
+
+    // Getter for type
+    public String getType() {
+        return type;
+    }
+
+    // Getter for dateOfIssue
+    public java.sql.Date getDateOfIssue() {
+        return dateOfIssue;
     }
 
 }

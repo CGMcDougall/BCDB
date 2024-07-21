@@ -1,5 +1,5 @@
 public enum Group {
 
-    VPD,RCMP,VPA,CoastGuard,TransportCanada;
+     VPD,RCMP,VPA,CCG,TC;
 
 }

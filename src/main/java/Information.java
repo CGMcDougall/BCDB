@@ -16,6 +16,20 @@ public class Information {
     private String add1;
     private String add2;
 
+    public Information(){
+        this.model = "NONE";
+        this.len = 0;
+        this.type = "NONE";
+        this.primColor = "NONE";
+        this.detailColor = "NONE";
+        this.tarpColor = "NONE";
+        this.numSails = 0;
+        this.numMasts = 0;
+        this.desc = "NONE";
+        this.add1 = "NONE";
+        this.add2 = "NONE";
+    }
+
     public Information(String model, float len, String type, String primColor, String detailColor,
                 String tarpColor, int numSails, int numMasts, String desc,
                 String add1, String add2) {
@@ -50,8 +64,52 @@ public class Information {
 
 
 
+    //MASS UPDATE FUNCTION
+    // Method to update boat details based on non-empty strings and non-negative integers
+    public void updateBoatDetails(String model, Float len, String type, String primColor, String detailColor,
+                                  String tarpColor, Integer numSails, Integer numMasts, String desc, String add1, String add2) {
+        if (model != null && !model.isEmpty()) {
+            this.model = model;
+        }
+        if (len != null && len >= 0) {
+            this.len = len;
+        }
+        if (type != null && !type.isEmpty()) {
+            this.type = type;
+        }
+        if (primColor != null && !primColor.isEmpty()) {
+            this.primColor = primColor;
+        }
+        if (detailColor != null && !detailColor.isEmpty()) {
+            this.detailColor = detailColor;
+        }
+        if (tarpColor != null && !tarpColor.isEmpty()) {
+            this.tarpColor = tarpColor;
+        }
+        if (numSails != null && numSails >= 0) {
+            this.numSails = numSails;
+        }
+        if (numMasts != null && numMasts >= 0) {
+            this.numMasts = numMasts;
+        }
+        if (desc != null && !desc.isEmpty()) {
+            this.desc = desc;
+        }
+        if (add1 != null && !add1.isEmpty()) {
+            this.add1 = add1;
+        }
+        if (add2 != null && !add2.isEmpty()) {
+            this.add2 = add2;
+        }
+    }
+
+
     // Getters and Setters
 
+
+    public void setID(String id){
+        if (this.id == null || this.id.isEmpty()) this.id = id;
+    }
 
     public String getId() {
         return id;
@@ -64,6 +122,9 @@ public class Information {
     public void setmodel(String model) {
         this.model = model;
     }
+
+    public void setLen(float len){ this.len = len; }
+    public float getLen(){ return len; }
 
     public String getType() {
         return type;

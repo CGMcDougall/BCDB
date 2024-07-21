@@ -91,8 +91,6 @@ public class MiddleMan {
     }
 
 
-
-
     public static void getBoatHist(SQLManager sql, Scanner in){
             Information i = getBoatInfo(sql,in);
             if(i == null)return;
@@ -128,6 +126,165 @@ public class MiddleMan {
             }
 
     }
+
+    public static void getBoatHist(SQLManager sql, Information i){
+        String id = i.getId();
+
+        try{
+            ResultSet r  = sql.getBoat(id);
+
+            if(r.isBeforeFirst()){
+                Boat b = new Boat(r);
+                b.setInfo(i);
+                System.out.println(b.toString());
+            }
+
+            r = sql.getOwnershipInfo(id,-1);
+
+            if(r.isBeforeFirst()){
+                Ownership ow = new Ownership(r);
+                System.out.println(ow.getInfoString());
+            }
+
+            r = sql.getNoticeInfo(-1,id,-1);
+
+            if(r.isBeforeFirst()){
+                Notice n = new Notice(r);
+                System.out.println(n.getString());
+            }
+
+            //Boat b = new(sql.getBoat(i.getId()));
+        }
+        catch (Exception e){
+            System.out.println(e);
+        }
+    }
+
+    public static boolean updateBoatInfo(SQLManager sql, Information i){
+        Scanner in = new Scanner(System.in);
+        String newModel = null;
+        float newLen = -1;
+        String newType = null;
+        String newPrimColor = null;
+        String newDetailColor = null;
+        String newTarpColor = null;
+        int newNumSails = -1;
+        int newNumMasts = -1;
+        String newDesc = null;
+        String newAdd1 = null;
+        String newAdd2 = null;
+        String input;
+        try{
+
+            System.out.print(String.format("Enter Boat Model (Currently: %s): ", i.getmodel()));
+           input = in.nextLine();
+            if (!input.isEmpty()) {
+                newModel = input;
+            }
+
+            System.out.print(String.format("Enter Length (Currently: %.2f meters): ", i.getLen()));
+            input = in.nextLine();
+            if (!input.isEmpty()) {
+                try {
+                    float inputLen = Float.parseFloat(input);
+                    if (inputLen >= 0) {
+                        newLen = inputLen;
+                    } else {
+                        System.out.println("Invalid input for length. Keeping current value.");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input for length. Keeping current value.");
+                }
+            }
+
+            System.out.print(String.format("Enter Boat Type (Currently: %s): ", i.getType()));
+            input = in.nextLine();
+            if (!input.isEmpty()) {
+                newType = input;
+            }
+
+            System.out.print(String.format("Enter Primary Color (Currently: %s): ", i.getPrimColor()));
+            input = in.nextLine();
+            if (!input.isEmpty()) {
+                newPrimColor = input;
+            }
+
+            System.out.print(String.format("Enter Detail Color (Currently: %s): ", i.getDetailColor()));
+            input = in.nextLine();
+            if (!input.isEmpty()) {
+                newDetailColor = input;
+            }
+
+            System.out.print(String.format("Enter Tarp Color (Currently: %s): ", i.getTarpColor()));
+            input = in.nextLine();
+            if (!input.isEmpty()) {
+                newTarpColor = input;
+            }
+
+            System.out.print(String.format("Enter Number of Sails (Currently: %d): ", i.getNumSails()));
+            input = in.nextLine();
+            if (!input.isEmpty()) {
+                try {
+                    int inputNumSails = Integer.parseInt(input);
+                    if (inputNumSails >= 0) {
+                        newNumSails = inputNumSails;
+                    } else {
+                        System.out.println("Invalid input for number of sails. Keeping current value.");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input for number of sails. Keeping current value.");
+                }
+            }
+
+            System.out.print(String.format("Enter Number of Masts (Currently: %d): ", i.getNumMasts()));
+            input = in.nextLine();
+            if (!input.isEmpty()) {
+                try {
+                    int inputNumMasts = Integer.parseInt(input);
+                    if (inputNumMasts >= 0) {
+                        newNumMasts = inputNumMasts;
+                    } else {
+                        System.out.println("Invalid input for number of masts. Keeping current value.");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input for number of masts. Keeping current value.");
+                }
+            }
+
+            System.out.print(String.format("Enter Description (Currently: %s): ", i.getDesc()));
+            input = in.nextLine();
+            if (!input.isEmpty()) {
+                newDesc = input;
+            }
+
+            System.out.print(String.format("Enter Additional Info 1 (Currently: %s): ", i.getAdd1()));
+            input = in.nextLine();
+            if (!input.isEmpty()) {
+                newAdd1 = input;
+            }
+
+            System.out.print(String.format("Enter Additional Info 2 (Currently: %s): ", i.getAdd2()));
+            input = in.nextLine();
+            if (!input.isEmpty()) {
+                newAdd2 = input;
+            }
+
+            i.updateBoatDetails(newModel,newLen,newType,newPrimColor,newDetailColor,newTarpColor,newNumSails,newNumMasts,newDesc,newAdd1,newAdd2);
+
+
+            System.out.println("Is the following correct: \n");
+            System.out.println(i.printBoatDetails());
+
+            return sql.updateBoatInfo(i);
+        }
+        catch (Exception e){
+            System.out.println(e);
+        }
+        return false;
+
+    }
+
+
     public static Information getBoatInfo(SQLManager sql, Scanner in){
         while(true){
             try{
@@ -198,6 +355,115 @@ public class MiddleMan {
                 return null;
             }
         }
+    }
+
+    public static boolean newBoat(SQLManager sql, Scanner in){
+        try{
+            System.out.println("Please enter a HIN code");
+            String hin = in.nextLine();
+
+            System.out.println("Enter a name for the boat");
+            String name = in.nextLine();
+
+            Information I = new Information();
+
+
+            boolean boat = sql.newBoat(hin,name,I);
+
+            sql.printResultSet(sql.getBoatInfo(I.getId()));
+
+            boolean boatInfo = updateBoatInfo(sql,I);
+
+            //IF either fail, clean data
+            if(!boat || !boatInfo) sql.cleanBoatData(I.getId());
+
+        }
+        catch (Exception e){
+            System.out.println(e + " In newBoat (middleman)");
+        }
+        return false;
+    }
+
+
+    public static Notice newNotice(SQLManager sql, Scanner in, Information i){
+        String boatId = i.getId();
+        //MAYBE ADD A WHILE LOOP?
+        Owner own = getOwnerInfo(sql,in);
+        if(own == null)return null;
+
+        try {
+            System.out.println("Which group is this from? \n   VPD (0) ,RCMP (1) ,VPA (2) ,CoastGuard (3) ,TransportCanada (4)");
+
+            int G = 0;
+            while (true) {
+
+                String input = in.nextLine();
+                if (!input.isEmpty()) {
+                    try {
+                        G = Integer.parseInt(input);
+                        break;
+                    }
+                    catch (NumberFormatException e) {
+                        System.out.println("Invalid input.");
+                    }
+                }
+            }
+
+            Group g = null;
+            switch (G){
+                case 0:
+                    g = Group.VPD;
+                    break;
+                case 1:
+                    g = Group.RCMP;
+                    break;
+                case 2:
+                    g = Group.VPA;
+                    break;
+                case 3:
+                    g = Group.CCG;
+                    break;
+                case 4:
+                    g = Group.TC;
+                    break;
+                default:
+                    g = Group.VPD;
+                    break;
+            }
+
+
+            System.out.println("Please input a type");
+            String Type = in.nextLine();
+
+            System.out.println("Please input a incident number");
+            String IncNum = in.nextLine();
+
+
+
+            System.out.println("Please input a date of issue (YYYY-MM-DD)");
+            java.sql.Date dateOfIssue;
+            while (true) {
+                try {
+                    String dateString = in.nextLine();
+                    dateOfIssue = java.sql.Date.valueOf(dateString);
+                    break;
+                } catch (IllegalArgumentException e) {
+                    System.out.print("Invalid date format. Please enter in YYYY-MM-DD format: ");
+                }
+            }
+
+
+            Notice n = new Notice(boatId, own.getId(),g,Type,IncNum,dateOfIssue);
+
+            System.out.println("Is this correct: \n " + n.getString());
+            sql.newNotice(n);
+
+
+        }
+        catch (Exception e){
+            System.out.println(e);
+        }
+        return null;
     }
 
 }

@@ -13,6 +13,15 @@ public class Permit {
     private java.sql.Date expiry;
 
 
+    public Permit(int id, String boatId, int ownerId, java.sql.Date is, java.sql.Date exp){
+
+        this.id = id;
+        this.boatId = boatId;
+        this.ownerId = ownerId;
+        this.issue = is;
+        this.expiry = exp;
+    }
+
     public Permit(ResultSet r) throws SQLException {
         this.id = r.getInt(1);
         this.boatId = r.getString(2);
