@@ -194,6 +194,40 @@ public class SQLManager {
         }
     }
 
+
+    //gets all location info of the boat in question (From all owners)
+    public ResultSet getBoatLocationInfo(String id){
+        try{
+            String f = String.format("SELECT * FROM location WHERE boatid = '%s'", id);
+            Statement s = con.createStatement();
+            s.executeQuery(f);
+            ResultSet r = s.getResultSet();
+
+            return r;
+        }
+        catch (Exception e){
+            System.out.println(e + " In getLocationInfo (SQLMANAGER)");
+        }
+        return null;
+    }
+    //gets all location info of the boat in question (From one owners)
+//    public ResultSet getBoatLocationInfo(String id, Owner o){
+//        try{
+//            String f = String.format("SELECT * FROM location WHERE boatid = '%s' AND ", id);
+//            Statement s = con.createStatement();
+//            s.executeQuery(f);
+//            ResultSet r = s.getResultSet();
+//
+//            return r;
+//        }
+//        catch (Exception e){
+//            System.out.println(e + " In getLocationInfo (SQLMANAGER)");
+//        }
+//        return null;
+//    }
+
+
+
     public void printResultSet(ResultSet r) {
         try {
             int colCount = r.getMetaData().getColumnCount();
@@ -252,7 +286,38 @@ public class SQLManager {
     }
 
 
-    //public  boolean newInfo
+    public boolean newOwner(Owner o){
+        try{
+            String f = String.format("INSERT INTO owners (firstname,lastname,contact,license) VALUES ('%s','%s','%s','%s')",
+                    o.getFirstname(),o.getLastname(),o.getContact(),o.getLic());
+
+            Statement s = con.createStatement();
+            s.executeUpdate(f);
+
+            return true;
+        }
+        catch (Exception e){
+            System.out.println(e + " In newOwner (SQLMANAGER)");
+        }
+        return false;
+    }
+
+    public boolean newOwnership(Ownership own){
+        try{
+            String f = String.format("INSERT INTO ownership (boatid,ownerid,ownedfrom,ownedto) VALUES ('%s','%d','%tF','%tF')",
+            own.getBoatId(),own.getOwnerId(),own.getOwnedFrom(),own.getOwnedTo());
+
+            Statement s = con.createStatement();
+            s.executeUpdate(f);
+
+            return true;
+        }
+        catch (Exception e){
+            System.out.println(e + " in newOwnership (SQLMANAGER)");
+        }
+        return  false;
+    }
+
 
     public boolean newBoat(String HIN, String name, Information I){
         try{

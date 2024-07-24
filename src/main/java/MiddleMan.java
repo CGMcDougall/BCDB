@@ -1,4 +1,7 @@
 import java.sql.ResultSet;
+import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -441,11 +444,11 @@ public class MiddleMan {
 
 
             System.out.println("Please input a date of issue (YYYY-MM-DD)");
-            java.sql.Date dateOfIssue;
+            LocalDate dateOfIssue;
             while (true) {
                 try {
                     String dateString = in.nextLine();
-                    dateOfIssue = java.sql.Date.valueOf(dateString);
+                    dateOfIssue = stringToDate(dateString);
                     break;
                 } catch (IllegalArgumentException e) {
                     System.out.print("Invalid date format. Please enter in YYYY-MM-DD format: ");
@@ -464,6 +467,60 @@ public class MiddleMan {
             System.out.println(e);
         }
         return null;
+    }
+
+    public static Owner newOwner(SQLManager sql, Scanner in){
+        Owner o = null;
+        try{
+            System.out.println("Please enter a first name");
+            String fn = in.nextLine();
+
+            System.out.println("Please enter a last name");
+            String ln = in.nextLine();
+
+            System.out.println("Please enter their phone number");
+            String pn = in.nextLine();
+
+            System.out.println("Please enter their license number");
+            String lic = in.nextLine();
+
+            o = new Owner(fn,ln,pn,lic);
+
+        }
+        catch (Exception e){
+            System.out.println(e + " IN newOwner");
+        }
+        return o;
+    }
+
+    public static Ownership AddOwnership(SQLManager sql,Scanner in, Owner o, Information i){
+        Ownership own = null;
+        try{
+            String f = String.format("Current owner selected is: %s %s \n Current boat selected is the: %s %s %s",
+                    o.getFirstname(), o.getLastname(), i.getPrimColor(), i.getmodel(),i.getType());
+            System.out.println(f + "\n is this correct?\n");
+
+            System.out.println("Enter the date owned from (yyyy-mm-dd): ");
+            LocalDate oF= stringToDate(in.nextLine());
+
+            System.out.println("Enter the date owned to (yyyy-mm-dd): ");
+            LocalDate oT = stringToDate(in.nextLine());
+
+            own = new Ownership(i.getId(), o.getId(),oF,oT);
+
+        }
+        catch (Exception e){
+            System.out.println(e + "In AddOwnership (MM)");
+        }
+        return own;
+    }
+
+
+
+    //HELPER FUNCTIONS
+    public static LocalDate stringToDate(String d) throws ParseException {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return LocalDate.parse(d);
     }
 
 }

@@ -11,11 +11,21 @@ public class main {
 
 
 
-        //i = MiddleMan.getBoatInfo(sql,in);
+        i = MiddleMan.getBoatInfo(sql,in);
+        //Owner o = MiddleMan.newOwner(sql,in);
+        //sql.newOwner(o);
+        //Owner o = MiddleMan.getOwnerInfo(sql,in);
 
-        MiddleMan.newBoat(sql,in);
+        //Ownership own = MiddleMan.AddOwnership(sql,in,o,i);
 
-        //MiddleMan.newNotice(sql,in,i);
+        //sql.newOwnership(own);
+
+        //System.out.println(o.getString() + "\n" + own.getInfoString());
+
+
+        //MiddleMan.newBoat(sql,in);
+
+        MiddleMan.newNotice(sql,in,i);
         //MiddleMan.updateBoatInfo(sql,i);
         //MiddleMan.updateBoatInfo(sql,i);
         //sql.updateBoatInfo(i);

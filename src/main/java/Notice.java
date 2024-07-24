@@ -1,6 +1,7 @@
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 
 public class Notice {
     int id;
@@ -11,11 +12,11 @@ public class Notice {
 
     String incidentNumber;
     String type;
-    java.sql.Date dateOfIssue;
+    LocalDate dateOfIssue;
 
 
 
-    public Notice(String boatId, int ownerId, Group g, String type, String incidentNumber, java.sql.Date d){
+    public Notice(String boatId, int ownerId, Group g, String type, String incidentNumber, LocalDate d){
         this.boatId = boatId;
         this.ownerId = ownerId;
         this.g = g;
@@ -32,7 +33,7 @@ public class Notice {
         this.g = Group.valueOf(r.getString(4));
         this.type = r.getString(5);
         this.incidentNumber = r.getString(6);
-        this.dateOfIssue = r.getDate(7);
+        this.dateOfIssue = r.getDate(7).toLocalDate();
     }
 
 
@@ -44,7 +45,7 @@ public class Notice {
                         "Type: %s\n" +
                         "Incident Number: %s\n" +
                         "Date of Issue: %s\n",
-                id, boatId, ownerId, g,type, incidentNumber, formatDate(dateOfIssue));
+                id, boatId, ownerId, g,type, incidentNumber, dateOfIssue.toString());
     }
 
     // Helper method to format date
@@ -84,7 +85,7 @@ public class Notice {
     }
 
     // Getter for dateOfIssue
-    public java.sql.Date getDateOfIssue() {
+    public LocalDate getDateOfIssue() {
         return dateOfIssue;
     }
 
