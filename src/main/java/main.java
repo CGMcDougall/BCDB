@@ -9,9 +9,11 @@ public class main {
         Boat b = null;
         Information i = null;
 
+        GUI gui = new GUI();
+        gui.mainMenu(sql);
+        //gui.mainMenu();
 
-
-        i = MiddleMan.getBoatInfo(sql,in);
+        //i = MiddleMan.getBoatInfo(sql,in);
         //Owner o = MiddleMan.newOwner(sql,in);
         //sql.newOwner(o);
         //Owner o = MiddleMan.getOwnerInfo(sql,in);
@@ -25,7 +27,7 @@ public class main {
 
         //MiddleMan.newBoat(sql,in);
 
-        MiddleMan.newNotice(sql,in,i);
+        //MiddleMan.newNotice(sql,in,i);
         //MiddleMan.updateBoatInfo(sql,i);
         //MiddleMan.updateBoatInfo(sql,i);
         //sql.updateBoatInfo(i);

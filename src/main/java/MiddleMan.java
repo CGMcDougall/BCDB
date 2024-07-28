@@ -288,6 +288,34 @@ public class MiddleMan {
     }
 
 
+    public static ArrayList<Information> getBoatInfo(SQLManager sql, String model, String len,String type,String primColor,String detailColor,String tarpColor,String numSails,String numMasts,String desc){
+        try{
+            ResultSet r = sql.getBoat(model, len, type, primColor, detailColor, tarpColor, numSails, numMasts, desc, "", "");
+            ArrayList<Information> l = new ArrayList<>();
+            Information c;
+            int count = 0;
+
+
+            while(r.next()){
+                System.out.println(String.format("Option '%s'",count));
+                Information i = new Information(r);
+                l.add(i);
+                System.out.println(i.printBoatDetails() + "\n");
+                count++;
+            }
+
+            //c = l.get(0);
+
+            return l;
+
+        }
+        catch (Exception e){
+            System.out.println(e + " in getBoatInfo (MM)");
+        }
+        return null;
+    }
+
+
     public static Information getBoatInfo(SQLManager sql, Scanner in){
         while(true){
             try{
