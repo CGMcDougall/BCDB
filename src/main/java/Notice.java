@@ -26,7 +26,7 @@ public class Notice {
     }
 
     public Notice(ResultSet r) throws SQLException {
-        r.next();
+        //r.next();
         this.id = r.getInt(1);
         this.boatId = r.getString(2);
         this.ownerId = r.getInt(3);

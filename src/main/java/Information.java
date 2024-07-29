@@ -214,6 +214,13 @@ public class Information {
 
     }
 
+    public String stringFormat(){
+        String s = "Model: "+this.model+", Length: "+this.len+", Primary Color: "+this.primColor+", Detail Color: "+this.detailColor+"";
+        System.out.println(s);
+        return s;
+    }
+
+
 }
 
 

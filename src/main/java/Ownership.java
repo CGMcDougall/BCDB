@@ -12,12 +12,18 @@ public class Ownership {
     LocalDate ownedTo;
 
     public Ownership(ResultSet r) throws SQLException {
-        r.next();
+        //r.next();
         this.id = r.getInt(1);
         this.boatId = r.getString(2);
         this.ownerId = r.getInt(3);
-        this.ownedFrom = r.getDate(4).toLocalDate();
-        this.ownedTo = r.getDate(5).toLocalDate();
+
+        this.ownedFrom = null;
+        this.ownedTo = null;
+
+        if(r.getDate(4) != null)this.ownedFrom = r.getDate(4).toLocalDate();
+        if(r.getDate(5) != null)this.ownedTo = r.getDate(5).toLocalDate();
+
+
 
     }
 
@@ -39,8 +45,10 @@ public class Ownership {
         //SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         //String ownedFromDate = dateFormat.format(ownedFrom);
         //String ownedToDate = (ownedTo != null) ? dateFormat.format(ownedTo) : "Present";
-        String ownedFromDate = ownedFrom.toString();
-        String ownedToDate = ownedTo.toString();
+        String ownedFromDate = "NA";
+        String ownedToDate = "Present";
+        if(ownedFrom != null)ownedFromDate = ownedFrom.toString();
+         if(ownedTo != null)ownedToDate = ownedTo.toString();
 
 
         return String.format("ID: %d\n" +

@@ -41,6 +41,86 @@ public class MiddleMan {
             }
     }
 
+    public static ArrayList<Notice> getOwnerNoticeHist(SQLManager sql, String ID){
+        try{
+
+            int id = Integer.valueOf(ID);
+
+            ResultSet r  = sql.getNoticeInfo(-1,"",id);
+
+            ArrayList<Notice> l = new ArrayList<>();
+
+            while(r.next()){
+                //System.out.println(String.format("Option '%s'",count));
+                Notice n = new Notice(r);
+                l.add(n);
+            }
+
+
+            return l;
+
+        }
+        catch (Exception e){
+            System.out.println(e + " in getOwnerNoticeHist (MM)");
+        }
+        return null;
+
+    }
+
+    public static ArrayList<Ownership> getOwnerHist(SQLManager sql, String ID){
+        try {
+            int id = Integer.valueOf(ID);
+
+            ResultSet r = sql.getOwnershipInfo("",id);
+
+            ArrayList<Ownership> l = new ArrayList<>();
+
+            //System.out.println(r.next());
+
+
+            while(r.next()){
+                Ownership ow = new Ownership(r);
+                l.add(ow);
+                System.out.println(ow.getInfoString());
+            }
+
+            return l;
+
+        }
+        catch (Exception e){
+            System.out.println(e + " In getOwnerHist (MM)");
+        }
+        return null;
+
+    }
+
+
+
+
+    public static ArrayList<Owner> getOwnerInfo(SQLManager sql, String ID, String fn, String ln, String con, String lic){
+        try{
+            ResultSet r = sql.getOwner(fn,ln,ID,con,lic);
+
+            ArrayList<Owner> l = new ArrayList<>();
+            int count = 0;
+            Owner own;
+
+            while(r.next()){
+                System.out.println(String.format("Option '%s'",count));
+                Owner o = new Owner(r);
+                l.add(o);
+                System.out.println(o.getString());
+                count++;
+            }
+
+            return l;
+
+        }
+        catch (Exception e){
+            System.out.println(e + "In getOwnerInfo (MM)");
+        }
+        return null;
+    }
     public static Owner getOwnerInfo(SQLManager sql, Scanner in){
         while (true){
             try{

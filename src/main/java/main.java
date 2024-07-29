@@ -9,8 +9,12 @@ public class main {
         Boat b = null;
         Information i = null;
 
-        GUI gui = new GUI();
-        gui.mainMenu(sql);
+//        boatSearchGUI boatSearchGui = new boatSearchGUI();
+//        boatSearchGui.main(sql);
+
+        ownerSearchGUI ownerSearchGUI = new ownerSearchGUI();
+        ownerSearchGUI.main(sql);
+
         //gui.mainMenu();
 
         //i = MiddleMan.getBoatInfo(sql,in);

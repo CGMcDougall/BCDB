@@ -64,10 +64,13 @@ public class SQLManager {
                 f = f.substring(0, f.length() - 5);
             }
 
+            //System.out.println(f);
+
             Statement s = con.createStatement();
             s.executeQuery(f);
             ResultSet r = s.getResultSet();
             //r.next();
+            //printResultSet(r);
             return r;
 
         }
