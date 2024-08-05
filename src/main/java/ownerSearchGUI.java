@@ -19,8 +19,8 @@ public class ownerSearchGUI extends GUI {
     private DefaultListModel<String> DefaultOwnershipList = new DefaultListModel<>();
 
 
-    public ownerSearchGUI(){
-        super();
+    public ownerSearchGUI(SQLManager sql){
+        super(sql);
         ownerList.setModel(DefaultOwnerList);
         ownership.setModel(DefaultOwnershipList);
         Notices.setModel(DefaultNoticeList);
@@ -61,8 +61,8 @@ public class ownerSearchGUI extends GUI {
 
     public void ownerHistory(SQLManager sql, String id){
         MiddleMan mm = new MiddleMan();
-        ArrayList<Notice> n = mm.getOwnerNoticeHist(sql,id);
-        ArrayList<Ownership> o = mm.getOwnerHist(sql,id);
+        ArrayList<Notice> n = mm.getNoticeHist(sql,"",id);
+        ArrayList<Ownership> o = mm.getOwnershipHist(sql,"",id);
 
         for(Notice not : n)DefaultNoticeList.addElement(not.getString());
         for(Ownership own : o)DefaultOwnershipList.addElement(own.getInfoString());

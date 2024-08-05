@@ -1,9 +1,14 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
-public class GUI extends JFrame {
 
-    public GUI(){
+public class GUI extends JFrame implements KeyListener {
+
+protected SQLManager sql;
+
+    public GUI(SQLManager sql){
         setTitle("BCDB");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(400,400);
@@ -12,6 +17,10 @@ public class GUI extends JFrame {
         setLocationRelativeTo(null);
         // Get the local GraphicsEnvironment
         fullScreen();
+
+        this.sql = sql;
+
+        this.addKeyListener(this);
 
     }
 
@@ -36,11 +45,24 @@ public class GUI extends JFrame {
     }
 
 
-    public void main(SQLManager sql){
+    public void main(){
 
 
     }
 
 
+    @Override
+    public void keyTyped(KeyEvent e) {
 
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        //System.out.println(e.getKeyChar());
+    }
 }

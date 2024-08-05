@@ -1,6 +1,7 @@
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 
 public class Permit {
@@ -9,11 +10,11 @@ public class Permit {
     String boatId;
     int ownerId;
 
-    private java.sql.Date issue;
-    private java.sql.Date expiry;
+    private LocalDate issue;
+    private LocalDate expiry;
 
 
-    public Permit(int id, String boatId, int ownerId, java.sql.Date is, java.sql.Date exp){
+    public Permit(int id, String boatId, int ownerId, LocalDate is, LocalDate exp){
 
         this.id = id;
         this.boatId = boatId;
@@ -26,17 +27,19 @@ public class Permit {
         this.id = r.getInt(1);
         this.boatId = r.getString(2);
         this.ownerId = r.getInt(3);
-        this.issue = r.getDate(4);
-        this.expiry = r.getDate(5);
+        this.issue = r.getDate(4).toLocalDate();
+        this.expiry = r.getDate(5).toLocalDate();
     }
 
     public boolean isExpired(){
-        Date d = new Date(); //current DATE
-        return d.after(expiry);
+        //Date d = new Date(); //current DATE
+        LocalDate d = LocalDate.now();
+        return d.isAfter(expiry);
     }
 
-    public String info(){
-        return String.format("Issue Date: %t, Expiry Date: %t. Is expired: %b",issue,expiry,isExpired());
+    private String formatDate(java.sql.Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return sdf.format(date);
     }
 
     // Function to return formatted string
@@ -46,7 +49,7 @@ public class Permit {
                         "Owner ID: %d\n" +
                         "Issue Date: %s\n" +
                         "Expiry Date: %s\n",
-                id, boatId, ownerId, formatDate(issue), formatDate(expiry));
+                id, boatId, ownerId, issue, expiry);
     }
 
     // Helper method to format date

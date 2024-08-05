@@ -41,12 +41,15 @@ public class MiddleMan {
             }
     }
 
-    public static ArrayList<Notice> getOwnerNoticeHist(SQLManager sql, String ID){
+
+    //Returns an array list of notices when given a reference to SQL manager and a boatID or Owner ID (OR both)
+    public static ArrayList<Notice> getNoticeHist(SQLManager sql, String BID, String OID){
         try{
 
-            int id = Integer.valueOf(ID);
+            int oid = Integer.valueOf(OID);
+            //int bid = Integer.valueOf(BID);
 
-            ResultSet r  = sql.getNoticeInfo(-1,"",id);
+            ResultSet r  = sql.getNoticeInfo(-1,BID,oid);
 
             ArrayList<Notice> l = new ArrayList<>();
 
@@ -67,11 +70,13 @@ public class MiddleMan {
 
     }
 
-    public static ArrayList<Ownership> getOwnerHist(SQLManager sql, String ID){
-        try {
-            int id = Integer.valueOf(ID);
 
-            ResultSet r = sql.getOwnershipInfo("",id);
+    //Gets ownership history from ownership table (based on BID and OID)
+    public static ArrayList<Ownership> getOwnershipHist(SQLManager sql, String BID, String OID){
+        try {
+            int oid = Integer.valueOf(OID);
+            //System.out.println("EEEEEE");
+            ResultSet r = sql.getOwnershipInfo(BID,oid);
 
             ArrayList<Ownership> l = new ArrayList<>();
 
@@ -173,7 +178,38 @@ public class MiddleMan {
         }
     }
 
+    //returns an arraylist of permits given a boat ID
+    public ArrayList<Permit> getBoatPermitHist(SQLManager sql, String ID){
+        try{
+            ResultSet r = sql.getPermitHist(ID);
+            ArrayList<Permit> l = new ArrayList<>();
 
+
+            while(r.next()){
+                Permit p = new Permit(r);
+                l.add(p);
+            }
+
+            return l;
+
+        }
+        catch (Exception e){
+            System.out.println(e + " in getBoatPermitHist (MM)");
+        }
+        return null;
+    }
+
+    //returns an arrayList of noticess given by a boatID
+    public ArrayList<Notice> getBoatNoticeHist(SQLManager sql, String ID){
+        try{
+
+
+        }
+        catch (Exception e){
+            System.out.println(e + " In getBoatNoticeHist (MM)");
+        }
+        return null;
+    }
     public static void getBoatHist(SQLManager sql, Scanner in){
             Information i = getBoatInfo(sql,in);
             if(i == null)return;

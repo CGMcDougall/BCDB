@@ -64,7 +64,7 @@ public class SQLManager {
                 f = f.substring(0, f.length() - 5);
             }
 
-            //System.out.println(f);
+            System.out.println(f);
 
             Statement s = con.createStatement();
             s.executeQuery(f);
@@ -105,6 +105,24 @@ public class SQLManager {
             System.out.println(e);
             return null;
         }
+    }
+
+    //Get a result set of permits assosiated with a boatID (Including Expired ones)
+    public ResultSet getPermitHist(String ID){
+        try{
+            String f = String.format("SELECT * FROM permit WHERE boatid = '%s'",ID);
+            Statement s = con.createStatement();
+
+            s.executeQuery(f);
+            ResultSet r = s.getResultSet();
+
+            return r;
+
+        }
+        catch (Exception e){
+            System.out.println(e + " In getPermitHist (SQLMANAGER)");
+        }
+        return null;
     }
 
 

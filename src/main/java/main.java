@@ -9,11 +9,14 @@ public class main {
         Boat b = null;
         Information i = null;
 
-//        boatSearchGUI boatSearchGui = new boatSearchGUI();
-//        boatSearchGui.main(sql);
+        boatSearchGUI boatSearchGui = new boatSearchGUI(sql);
+        boatSearchGui.main();
 
-        ownerSearchGUI ownerSearchGUI = new ownerSearchGUI();
-        ownerSearchGUI.main(sql);
+
+
+
+//        ownerSearchGUI ownerSearchGUI = new ownerSearchGUI();
+//        ownerSearchGUI.main(sql);
 
         //gui.mainMenu();
 
