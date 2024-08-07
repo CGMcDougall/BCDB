@@ -284,6 +284,38 @@ public class SQLManager {
     }
 
 
+    public boolean updateOwnerInfo(Owner own){
+        try{
+            String f = String.format("UPDATE owners SET firstname = '%s', lastname = '%s', contact = '%s', license = '%s' WHERE '%d' = ownerid",
+                    own.getFirstname(),own.getLastname(),own.getContact(),own.getLic(),own.getId());
+            //System.out.println(f);
+            Statement s = con.createStatement();
+            s.executeUpdate(f);
+            return true;
+
+
+        }
+        catch (Exception e){
+            System.out.println(e + " IN updateOnwerInfo (SQLMANAGER)");
+        }
+        return false;
+    }
+
+
+    public boolean updateNoticeInfo(Notice n){
+        try{
+            String f = String.format("UPDATE notice SET noticetype = '%s', incidentnumber = '%s', dateofissue = '%tF' WHERE '%d' = noticeid",
+                    n.getType(),n.getIncidentNumber(),n.getDateOfIssue(),n.getId());
+            Statement s = con.createStatement();
+            s.executeUpdate(f);
+            return true;
+
+        }
+        catch (Exception e){
+            System.out.println(e + "In updateNoticeInfo (SQLMANGER)");
+        }
+        return false;
+    }
 
     //MAKE NEW DATABASE INFO
 

@@ -22,8 +22,7 @@ public class boatSearchGUI extends GUI {
     private JButton searchBoatButton;
     private JTextField lengthTextField;
     private JList BoatList;
-    private ArrayList<Information> boatInfoList = new ArrayList<>();
-    private Information SelectedBoat;
+
     private JLabel IMG;
     private JPanel subMain;
     private JList ownerList;
@@ -44,19 +43,30 @@ public class boatSearchGUI extends GUI {
     private JTextField sailDetails;
     private JTextField mastDetails;
     private JTextField descDetails;
-    private JButton saveButton;
+    private JButton BDsave;
     private JLabel activePermit;
     private JLabel boatID;
-    private JButton cancelButton;
+    private JButton BDcancelButton;
     private JList detailOwnerList;
     private JList detailNoticeList;
     private JList detailPermitList;
     private JButton clearBoatButton;
-    private JButton clearButton1;
-    private JTabbedPane Tabs;
+    private JButton clearOwnerButton;
+    private JTabbedPane SearchTabs;
     private JPanel boats;
     private JPanel owners;
-    private JPanel boatDetails;
+    private JButton BDedit;
+    private JTabbedPane EditTabs;
+    private JPanel AddTabs;
+    private JButton ODsave;
+    private JButton ODedit;
+    private JButton ODcancel;
+    private JTextField ODfn;
+    private JTextField ODln;
+    private JTextField ODcontact;
+    private JTextField ODlic;
+
+    private JTextField ODid;
     private  ImageIcon imgIcon = null;
     private DefaultListModel<String> DefaultBoatList = new DefaultListModel<>();
     private DefaultListModel<String> DefaultOwnerList = new DefaultListModel<>();
@@ -70,8 +80,22 @@ public class boatSearchGUI extends GUI {
     private DefaultListModel<String> DetailPermit = new DefaultListModel<>();
 
 
-    //Tabs::: O = boats, 1 = boatDetails, 2 = owners, 3 = ownerDetails
-    int Tab = 0;
+
+    //Stored DB info
+    private ArrayList<Information> boatInfoList = new ArrayList<>();
+    private ArrayList<Owner> OwnerInfoList = new ArrayList<>();
+    private ArrayList<Notice> NoticeInfoList = new ArrayList<>();
+    private ArrayList<Ownership> OwnershipInfoList = new ArrayList<>();
+
+    private Information SelectedBoat;
+    private Owner SelectedOwner;
+
+
+    //SearchTabs::: O = boats, 1 = owners
+    int searchTab = 0;
+
+    int editTab = 0;
+    int addTab = 0;
 
 
     public boatSearchGUI(SQLManager sql){
@@ -92,6 +116,40 @@ public class boatSearchGUI extends GUI {
         actions();
 
 
+        ownerList.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                int index = ownerList.getSelectedIndex();
+
+                if (index < 0) return;
+
+                SelectedOwner = OwnerInfoList.get(index);
+                ownerDetailInstantiate();
+                ownerHistory();
+            }
+        });
+
+        Notices.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+
+                int index = Notices.getSelectedIndex();
+                Notice n = NoticeInfoList.get(index);
+
+                if(n == null)return;
+
+                JFrame j =  (JFrame) SwingUtilities.getWindowAncestor(Notices);
+
+                JDialog not = new NoticePopup(j, sql,n);
+                //not.add(new JLabel("HELP"));
+                //not.add(new NoticePopup());
+                not.pack();
+
+                not.setVisible(true);
+                not.show();
+
+            }
+        });
     }
 
     public void main(){
@@ -130,17 +188,17 @@ public class boatSearchGUI extends GUI {
                 if (index < 0) return;
 
                 SelectedBoat = boatInfoList.get(index);
-                detailInstantiate();
+                boatDetailInstantiate();
 
             }
         });
-        Tabs.addChangeListener(new ChangeListener() {
+        SearchTabs.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
                 //JPanel jl = (JPanel) Tabs.getSelectedComponent();
                 //System.out.println(jl.g);
                 //System.out.println(Tabs.getSelectedIndex());
-                Tab = Tabs.getSelectedIndex();
+                searchTab = SearchTabs.getSelectedIndex();
             }
         });
 
@@ -149,8 +207,8 @@ public class boatSearchGUI extends GUI {
                     public boolean dispatchKeyEvent(KeyEvent e) {
                         if (e.getID() == KeyEvent.KEY_RELEASED) {
                             if(e.getKeyCode() == '\n'){
-                                if(Tab == 0)boatSearch();
-                                else if(Tab == 2)ownerSearch();
+                                if(searchTab == 0)boatSearch();
+                                else if(searchTab == 1)ownerSearch();
 
                             }
                         }
@@ -165,10 +223,88 @@ public class boatSearchGUI extends GUI {
                 clearBoatSearch();
             }
         });
-        clearButton1.addActionListener(new ActionListener() {
+        clearOwnerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 clearOwnerSearch();
+            }
+        });
+
+        editActions();
+
+    }
+
+    private void editActions(){
+        ODsave.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SelectedOwner.setFirstname(ODfn.getText());
+                SelectedOwner.setLastname(ODln.getText());
+                SelectedOwner.setContact(ODcontact.getText());
+                SelectedOwner.setLic(ODlic.getText());
+
+                MiddleMan mm = new MiddleMan();
+
+                boolean worked = mm.updateOwnerInfo(sql,SelectedOwner);
+                System.out.println(worked);
+            }
+        });
+        ODedit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //ODid.setEditable(true);
+                ODfn.setEditable(true);
+                ODln.setEditable(true);
+                ODcontact.setEditable(true);
+                ODlic.setEditable(true);
+            }
+        });
+        ODcancel.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadOwnerDetailText();
+                //ODid.setEditable(false);
+                ODfn.setEditable(false);
+                ODln.setEditable(false);
+                ODcontact.setEditable(false);
+                ODlic.setEditable(false);
+
+            }
+        });
+        BDsave.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(mastDetails.isEditable())editBoatDetails();
+            }
+        });
+        BDedit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                modelDetails.setEditable(true);
+                typeDetails.setEditable(true);
+                lenDetails.setEditable(true);
+                primDetails.setEditable(true);
+                detDetails.setEditable(true);
+                tarpDetails.setEditable(true);
+                sailDetails.setEditable(true);
+                mastDetails.setEditable(true);
+                descDetails.setEditable(true);
+            }
+        });
+
+        BDcancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadBoatDetailText();
+                modelDetails.setEditable(false);
+                typeDetails.setEditable(false);
+                lenDetails.setEditable(false);
+                primDetails.setEditable(false);
+                detDetails.setEditable(false);
+                tarpDetails.setEditable(false);
+                sailDetails.setEditable(false);
+                mastDetails.setEditable(false);
+                descDetails.setEditable(false);
             }
         });
 
@@ -215,13 +351,19 @@ public class boatSearchGUI extends GUI {
         descriptionTextField.setText("");
     }
 
-    private void detailInstantiate(){
+    private void boatDetailInstantiate(){
         if(SelectedBoat.equals(null))return;
 
-        loadDetailText();
+        loadBoatDetailText();
         loadExtendedDetail();
     }
 
+    private void ownerDetailInstantiate(){
+        if(SelectedOwner.equals(null))return;
+
+        loadOwnerDetailText();
+        //loadExtendedDetail();
+    }
 
     private void loadExtendedDetail(){
         String id = SelectedBoat.getId();
@@ -260,7 +402,25 @@ public class boatSearchGUI extends GUI {
     }
 
 
-    private void loadDetailText(){
+    private boolean editBoatDetails(){
+        try{
+
+            SelectedBoat.updateBoatDetails(modelDetails.getText(),Float.parseFloat(lenDetails.getText()),typeDetails.getText(),
+                    primDetails.getText(),detDetails.getText(),tarpDetails.getText(),Integer.parseInt(sailDetails.getText()),Integer.parseInt(mastDetails.getText()),
+                    descDetails.getText(),"","");
+
+            MiddleMan mm = new MiddleMan();
+            boolean worked = mm.updateBoatInfo(sql,SelectedBoat);
+            System.out.println(worked);
+        }
+        catch (Exception e){
+            System.out.println(e + " In GUI");
+        }
+        return false;
+    }
+
+    private void loadBoatDetailText(){
+        if(SelectedBoat == null)return;;
         modelDetails.setText(SelectedBoat.getmodel());
         typeDetails.setText(SelectedBoat.getType());
         lenDetails.setText(Float.toString(SelectedBoat.getLen()));
@@ -276,6 +436,18 @@ public class boatSearchGUI extends GUI {
     }
 
 
+    private void loadOwnerDetailText(){
+        if(SelectedOwner == null)return;
+        ODid.setText(Integer.toString(SelectedOwner.getId()));
+        ODfn.setText(SelectedOwner.getFirstname());
+        ODln.setText(SelectedOwner.getLastname());
+        ODcontact.setText(SelectedOwner.getContact());
+        ODlic.setText(SelectedOwner.getLic());
+
+
+
+    }
+
 
     //// HELPER FUNCTIONS
     private void ownerSearch(){
@@ -286,11 +458,22 @@ public class boatSearchGUI extends GUI {
         String c = contactTextField.getText();
         String lic = licenseTextField.getText();
 
-        ArrayList<Owner> own = mm.getOwnerInfo(sql, ID, fn, ln, c, lic);
 
-        for (Owner o : own) DefaultOwnerList.addElement(o.getString());
 
-        if (ID != null) ownerHistory(sql, ID);
+        OwnerInfoList = mm.getOwnerInfo(sql, ID, fn, ln, c, lic);
+
+        DefaultOwnerList.removeAllElements();
+        if (OwnerInfoList == null || OwnerInfoList.isEmpty()){
+            SelectedOwner = null;
+            return;
+        }
+
+
+        for (Owner o : OwnerInfoList) DefaultOwnerList.addElement(o.getString());
+
+        //loadOwnerDetailText();
+
+        //loadBoatDetailText();if (ID != null) ownerHistory(sql, ID);
     }
 
     private void clearOwnerSearch(){
@@ -301,13 +484,19 @@ public class boatSearchGUI extends GUI {
         licenseTextField.setText("");
     }
 
-    private void ownerHistory(SQLManager sql, String id){
-        MiddleMan mm = new MiddleMan();
-        ArrayList<Notice> n = mm.getNoticeHist(sql,"",id);
-        ArrayList<Ownership> o = mm.getOwnershipHist(sql,"",id);
+    private void ownerHistory(){
 
-        for(Notice not : n)DefaultNoticeList.addElement(not.getString());
-        for(Ownership own : o)DefaultOwnershipList.addElement(own.getInfoString());
+        if(SelectedOwner == null)return;
+
+        DefaultNoticeList.removeAllElements();
+        DefaultOwnershipList.removeAllElements();
+
+        MiddleMan mm = new MiddleMan();
+        NoticeInfoList = mm.getNoticeHist(sql,"",Integer.toString(SelectedOwner.getId()));
+        OwnershipInfoList = mm.getOwnershipHist(sql,"",Integer.toString(SelectedOwner.getId()));
+
+        for(Notice not : NoticeInfoList)DefaultNoticeList.addElement(not.getString());
+        for(Ownership own : OwnershipInfoList)DefaultOwnershipList.addElement(own.getInfoString());
 
     }
 

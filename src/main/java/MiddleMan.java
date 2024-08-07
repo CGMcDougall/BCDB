@@ -70,6 +70,15 @@ public class MiddleMan {
 
     }
 
+    public static boolean updateNotice(SQLManager sql, Notice n){
+        try{
+            return sql.updateNoticeInfo(n);
+        }
+        catch (Exception e){
+            System.out.println(e + " in updateNotice (MM)");
+            return false;
+        }
+    }
 
     //Gets ownership history from ownership table (based on BID and OID)
     public static ArrayList<Ownership> getOwnershipHist(SQLManager sql, String BID, String OID){
@@ -101,21 +110,16 @@ public class MiddleMan {
 
 
 
-
     public static ArrayList<Owner> getOwnerInfo(SQLManager sql, String ID, String fn, String ln, String con, String lic){
         try{
             ResultSet r = sql.getOwner(fn,ln,ID,con,lic);
 
             ArrayList<Owner> l = new ArrayList<>();
-            int count = 0;
-            Owner own;
 
             while(r.next()){
-                System.out.println(String.format("Option '%s'",count));
                 Owner o = new Owner(r);
                 l.add(o);
-                System.out.println(o.getString());
-                count++;
+
             }
 
             return l;
@@ -176,6 +180,17 @@ public class MiddleMan {
                 return null;
             }
         }
+    }
+
+
+    public static boolean updateOwnerInfo(SQLManager sql, Owner own){
+        try{
+            return sql.updateOwnerInfo(own);
+        }
+        catch (Exception e){
+            System.out.println(e + "updateOwnerInfo (MM)");
+        }
+        return false;
     }
 
     //returns an arraylist of permits given a boat ID
@@ -279,8 +294,19 @@ public class MiddleMan {
         }
     }
 
-    public static boolean updateBoatInfo(SQLManager sql, Information i){
-        Scanner in = new Scanner(System.in);
+    public static boolean updateBoatInfo(SQLManager sql,Information i){
+        try{
+            return sql.updateBoatInfo(i);
+        }
+        catch (Exception e){
+            System.out.println(e + "In updateBoatInfo (MM)");
+        }
+        return false;
+    }
+
+
+    public static boolean updateBoatInfo(SQLManager sql,Scanner in, Information i){
+        //Scanner in = new Scanner(System.in);
         String newModel = null;
         float newLen = -1;
         String newType = null;

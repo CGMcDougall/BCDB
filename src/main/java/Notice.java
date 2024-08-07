@@ -2,6 +2,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class Notice {
     int id;
@@ -37,6 +38,13 @@ public class Notice {
     }
 
 
+    public void updateNotice(Notice n){
+        this.g = n.getGroup();
+        this.type = n.getType();
+        this.incidentNumber = n.getIncidentNumber();
+        this.dateOfIssue = n.getDateOfIssue();
+    }
+
     public String getString() {
         return String.format("Notice ID: %d\n" +
                         "Boat ID: %s\n" +
@@ -53,6 +61,13 @@ public class Notice {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         return sdf.format(date);
     }
+    private LocalDate formatDate(String s){
+        LocalDate l = LocalDate.parse(s, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        return l;
+    }
+
+
+
 
 
     public int getId() {
@@ -88,5 +103,38 @@ public class Notice {
     public LocalDate getDateOfIssue() {
         return dateOfIssue;
     }
+
+
+    public void setGroup(String s){
+        try {
+            g = Group.fromString(s);
+        }
+        catch (Exception e){
+            System.out.println(e + "In setGroup (NOTICE)");
+            if(g == null)g = Group.VPD;
+        }
+    }
+
+    public void setType(String s){
+        type = s;
+    }
+
+    public void setIncidentNumber(String s){
+        incidentNumber = s;
+    }
+
+    public void setDateOfIssue(String s){
+        try{
+            dateOfIssue = formatDate(s);
+        }
+        catch (Exception e){
+            System.out.println(e + "in setDateOfIssue (Notice)");
+            if (dateOfIssue == null)dateOfIssue = LocalDate.now();
+        }
+
+    }
+
+
+
 
 }
