@@ -6,11 +6,14 @@ public class main {
         SQLManager sql = new SQLManager();
         Scanner in = new Scanner(System.in);
 
+
         Boat b = null;
         Information i = null;
 
         boatSearchGUI boatSearchGui = new boatSearchGUI(sql);
         boatSearchGui.main();
+
+
 
 
 

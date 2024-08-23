@@ -16,16 +16,23 @@ public class NoticePopup extends JDialog {
     Notice n = null;
 
     public NoticePopup(JFrame f, SQLManager sql, Notice n){
-        super(f,"NoticeInfo",true);
-        setLocationRelativeTo(f);
+        super(f,"NoticeInfo",false);
+
         this.sql = sql;
         this.n = n;
+
+
 
 
         updateNotice();
 
         add(Notice);
         action();
+
+        pack();
+        setVisible(true);
+        setLocationRelativeTo(f);
+
     }
 
 

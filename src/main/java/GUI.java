@@ -36,6 +36,7 @@ protected SQLManager sql;
         if (gd.isFullScreenSupported()) {
             // Enter fullscreen mode
             gd.setFullScreenWindow(this);
+            //setResizable(false);
         } else {
             System.out.println("Fullscreen mode is not supported.");
             setSize(800, 600); // Set a default size

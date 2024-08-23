@@ -70,6 +70,25 @@ public class MiddleMan {
 
     }
 
+    public static ArrayList<Notice> getNotice(SQLManager sql, String num, String ownID, String boatID, String Date, String G){
+        try{
+
+            ResultSet r = sql.getNoticeInfo(num,ownID,boatID,stringToDate(Date),G);
+            ArrayList<Notice> l = new ArrayList<>();
+
+            while(r.next()){
+                l.add(new Notice(r));
+            }
+            return l;
+
+
+        }
+        catch (Exception e){
+            System.out.println(e + " in getNotice (MM)");
+        }
+        return null;
+    }
+
     public static boolean updateNotice(SQLManager sql, Notice n){
         try{
             return sql.updateNoticeInfo(n);
@@ -689,6 +708,7 @@ public class MiddleMan {
 
     //HELPER FUNCTIONS
     public static LocalDate stringToDate(String d) throws ParseException {
+        if(d.isEmpty() || d == null)return null;
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return LocalDate.parse(d);
     }

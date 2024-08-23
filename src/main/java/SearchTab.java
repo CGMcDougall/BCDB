@@ -9,8 +9,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-public class boatSearchGUI extends GUI {
-    private JPanel MainMenu;
+public class SearchTab extends JPanel {
+    private JTabbedPane SearchTabs;
+    private JPanel boats;
+    private JPanel subMain;
+    private JList BoatList;
     private JTextField modelTextField;
     private JTextField typeTextField;
     private JTextField primaryColorTextField;
@@ -21,62 +24,29 @@ public class boatSearchGUI extends GUI {
     private JTextField descriptionTextField;
     private JButton searchBoatButton;
     private JTextField lengthTextField;
-    private JList BoatList;
-
-    private JLabel IMG;
-    private JPanel subMain;
+    private JButton clearBoatButton;
+    private JPanel owners;
     private JList ownerList;
     private JTextField IDTextField;
     private JTextField firstnameTextField;
     private JTextField lastnameTextField;
     private JTextField contactTextField;
     private JTextField licenseTextField;
+    private JButton searchOwnerButton;
     private JList ownership;
     private JList Notices;
-    private JButton searchOwnerButton;
-    private JTextField modelDetails;
-    private JTextField typeDetails;
-    private JTextField lenDetails;
-    private JTextField primDetails;
-    private JTextField detDetails;
-    private JTextField tarpDetails;
-    private JTextField sailDetails;
-    private JTextField mastDetails;
-    private JTextField descDetails;
-    private JButton BDsave;
-    private JLabel activePermit;
-    private JLabel boatID;
-    private JButton BDcancelButton;
-    private JList detailOwnerList;
-    private JList detailNoticeList;
-    private JList detailPermitList;
-    private JButton clearBoatButton;
     private JButton clearOwnerButton;
-    private JTabbedPane SearchTabs;
-    private JPanel boats;
-    private JPanel owners;
-    private JButton BDedit;
-    private JTabbedPane EditTabs;
-    private JPanel AddTabs;
-    private JButton ODsave;
-    private JButton ODedit;
-    private JButton ODcancel;
-    private JTextField ODfn;
-    private JTextField ODln;
-    private JTextField ODcontact;
-    private JTextField ODlic;
-
-    private JTextField ODid;
     private JList NSnotice;
     private JTextField NSincidentNumTextField;
-    private JTextField NSownerIDTextField;
-    private JTextField NSboatIDTextField;
     private JTextField NSdateOfIssueTextField;
     private JComboBox NSgroup;
+    private JTextField NSboatIDTextField;
+    private JTextField NSownerIDTextField;
     private JButton NSsearchButton;
     private JButton NSclearButton;
-    private JTabbedPane Main;
-    private  ImageIcon imgIcon = null;
+    private JPanel SearchTab;
+
+
     private DefaultListModel<String> DefaultBoatList = new DefaultListModel<>();
     private DefaultListModel<String> DefaultOwnerList = new DefaultListModel<>();
     private DefaultListModel<String> DefaultNoticeList = new DefaultListModel<>();
@@ -107,51 +77,24 @@ public class boatSearchGUI extends GUI {
     private Owner SelectedOwner;
 
 
-    //SearchTabs::: O = boats, 1 = owners
     int searchTab = 0;
-
-    int editTab = 0;
-    int addTab = 0;
+    private SQLManager sql = null;
 
 
-    public boatSearchGUI(SQLManager sql){
-        super(sql);
-
-        //fullScreen();
-
-        BoatList.setModel(DefaultBoatList);
-        ownerList.setModel(DefaultOwnerList);
-        ownership.setModel(DefaultOwnershipList);
-        Notices.setModel(DefaultNoticeList);
-
-        detailNoticeList.setModel(DetailNotice);
-        detailPermitList.setModel(DetailPermit);
-        detailOwnerList.setModel(DetailOwner);
-        NSnotice.setModel(NSNoticeList);
-
-        actions();
-
-        JPanel tb = new SearchTab(sql);
-
-        Main.addTab("SearchTab", tb);
-
-
-
+    public SearchTab(SQLManager sql){
+        super();
+        this.sql = sql;
+        add(SearchTab);
+        setVisible(true);
 
     }
 
-    public void main(){
 
-        setContentPane(MainMenu);
-        revalidate();
-        repaint();
-
-        //System.out.println(getExtendedState());
-
-        Image();
-
-
+    public void setSQL(SQLManager sql){
+        this.sql = sql;
     }
+
+
 
     //TODO ACTIONS
     private void actions() {
@@ -176,7 +119,7 @@ public class boatSearchGUI extends GUI {
                 if (index < 0) return;
 
                 SelectedBoat = boatInfoList.get(index);
-                boatDetailInstantiate();
+                //boatDetailInstantiate();
 
             }
         });
@@ -191,19 +134,19 @@ public class boatSearchGUI extends GUI {
         });
 
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
-                    @Override
-                    public boolean dispatchKeyEvent(KeyEvent e) {
-                        if (e.getID() == KeyEvent.KEY_RELEASED) {
-                            if(e.getKeyCode() == '\n'){
-                                if(searchTab == 0)boatSearch();
-                                else if(searchTab == 1)ownerSearch();
+            @Override
+            public boolean dispatchKeyEvent(KeyEvent e) {
+                if (e.getID() == KeyEvent.KEY_RELEASED) {
+                    if(e.getKeyCode() == '\n'){
+                        if(searchTab == 0)boatSearch();
+                        else if(searchTab == 1)ownerSearch();
 
-                            }
-                        }
-                        // Returning false to let the event continue to be dispatched
-                        return false;
                     }
-                });
+                }
+                // Returning false to let the event continue to be dispatched
+                return false;
+            }
+        });
 
         clearBoatButton.addActionListener(new ActionListener() {
             @Override
@@ -226,7 +169,7 @@ public class boatSearchGUI extends GUI {
                 if (index < 0) return;
 
                 SelectedOwner = OwnerInfoList.get(index);
-                ownerDetailInstantiate();
+                //ownerDetailInstantiate();
                 ownerHistory();
             }
         });
@@ -277,85 +220,85 @@ public class boatSearchGUI extends GUI {
         });
 
 
-        editActions();
+        //editActions();
 
     }
 
-    private void editActions(){
-        ODsave.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SelectedOwner.setFirstname(ODfn.getText());
-                SelectedOwner.setLastname(ODln.getText());
-                SelectedOwner.setContact(ODcontact.getText());
-                SelectedOwner.setLic(ODlic.getText());
-
-                MiddleMan mm = new MiddleMan();
-
-                boolean worked = mm.updateOwnerInfo(sql,SelectedOwner);
-                System.out.println(worked);
-            }
-        });
-        ODedit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //ODid.setEditable(true);
-                ODfn.setEditable(true);
-                ODln.setEditable(true);
-                ODcontact.setEditable(true);
-                ODlic.setEditable(true);
-            }
-        });
-        ODcancel.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                loadOwnerDetailText();
-                //ODid.setEditable(false);
-                ODfn.setEditable(false);
-                ODln.setEditable(false);
-                ODcontact.setEditable(false);
-                ODlic.setEditable(false);
-
-            }
-        });
-        BDsave.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(mastDetails.isEditable())editBoatDetails();
-            }
-        });
-        BDedit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                modelDetails.setEditable(true);
-                typeDetails.setEditable(true);
-                lenDetails.setEditable(true);
-                primDetails.setEditable(true);
-                detDetails.setEditable(true);
-                tarpDetails.setEditable(true);
-                sailDetails.setEditable(true);
-                mastDetails.setEditable(true);
-                descDetails.setEditable(true);
-            }
-        });
-
-        BDcancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                loadBoatDetailText();
-                modelDetails.setEditable(false);
-                typeDetails.setEditable(false);
-                lenDetails.setEditable(false);
-                primDetails.setEditable(false);
-                detDetails.setEditable(false);
-                tarpDetails.setEditable(false);
-                sailDetails.setEditable(false);
-                mastDetails.setEditable(false);
-                descDetails.setEditable(false);
-            }
-        });
-
-    }
+//    private void editActions(){
+//        ODsave.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                SelectedOwner.setFirstname(ODfn.getText());
+//                SelectedOwner.setLastname(ODln.getText());
+//                SelectedOwner.setContact(ODcontact.getText());
+//                SelectedOwner.setLic(ODlic.getText());
+//
+//                MiddleMan mm = new MiddleMan();
+//
+//                boolean worked = mm.updateOwnerInfo(sql,SelectedOwner);
+//                System.out.println(worked);
+//            }
+//        });
+//        ODedit.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                //ODid.setEditable(true);
+//                ODfn.setEditable(true);
+//                ODln.setEditable(true);
+//                ODcontact.setEditable(true);
+//                ODlic.setEditable(true);
+//            }
+//        });
+//        ODcancel.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                loadOwnerDetailText();
+//                //ODid.setEditable(false);
+//                ODfn.setEditable(false);
+//                ODln.setEditable(false);
+//                ODcontact.setEditable(false);
+//                ODlic.setEditable(false);
+//
+//            }
+//        });
+//        BDsave.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                if(mastDetails.isEditable())editBoatDetails();
+//            }
+//        });
+//        BDedit.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                modelDetails.setEditable(true);
+//                typeDetails.setEditable(true);
+//                lenDetails.setEditable(true);
+//                primDetails.setEditable(true);
+//                detDetails.setEditable(true);
+//                tarpDetails.setEditable(true);
+//                sailDetails.setEditable(true);
+//                mastDetails.setEditable(true);
+//                descDetails.setEditable(true);
+//            }
+//        });
+//
+//        BDcancelButton.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                loadBoatDetailText();
+//                modelDetails.setEditable(false);
+//                typeDetails.setEditable(false);
+//                lenDetails.setEditable(false);
+//                primDetails.setEditable(false);
+//                detDetails.setEditable(false);
+//                tarpDetails.setEditable(false);
+//                sailDetails.setEditable(false);
+//                mastDetails.setEditable(false);
+//                descDetails.setEditable(false);
+//            }
+//        });
+//
+//    }
 
 
 
@@ -439,21 +382,21 @@ public class boatSearchGUI extends GUI {
         //loadBoatDetailText();if (ID != null) ownerHistory(sql, ID);
     }
 
-    private void loadBoatDetailText(){
-        if(SelectedBoat == null)return;;
-        modelDetails.setText(SelectedBoat.getmodel());
-        typeDetails.setText(SelectedBoat.getType());
-        lenDetails.setText(Float.toString(SelectedBoat.getLen()));
-        primDetails.setText(SelectedBoat.getPrimColor());
-        detDetails.setText(SelectedBoat.getDetailColor());
-        tarpDetails.setText(SelectedBoat.getTarpColor());
-        sailDetails.setText(Integer.toString(SelectedBoat.getNumSails()));
-        mastDetails.setText(Integer.toString(SelectedBoat.getNumMasts()));
-        descDetails.setText(SelectedBoat.getDesc());
-
-        boatID.setText("ID: " + SelectedBoat.getId());
-
-    }
+//    private void loadBoatDetailText(){
+//        if(SelectedBoat == null)return;;
+//        modelDetails.setText(SelectedBoat.getmodel());
+//        typeDetails.setText(SelectedBoat.getType());
+//        lenDetails.setText(Float.toString(SelectedBoat.getLen()));
+//        primDetails.setText(SelectedBoat.getPrimColor());
+//        detDetails.setText(SelectedBoat.getDetailColor());
+//        tarpDetails.setText(SelectedBoat.getTarpColor());
+//        sailDetails.setText(Integer.toString(SelectedBoat.getNumSails()));
+//        mastDetails.setText(Integer.toString(SelectedBoat.getNumMasts()));
+//        descDetails.setText(SelectedBoat.getDesc());
+//
+//        boatID.setText("ID: " + SelectedBoat.getId());
+//
+//    }
 
     private void ownerHistory(){
 
@@ -471,32 +414,32 @@ public class boatSearchGUI extends GUI {
 
     }
 
-    private void loadOwnerDetailText(){
-        if(SelectedOwner == null)return;
-        ODid.setText(Integer.toString(SelectedOwner.getId()));
-        ODfn.setText(SelectedOwner.getFirstname());
-        ODln.setText(SelectedOwner.getLastname());
-        ODcontact.setText(SelectedOwner.getContact());
-        ODlic.setText(SelectedOwner.getLic());
+//    private void loadOwnerDetailText(){
+//        if(SelectedOwner == null)return;
+//        ODid.setText(Integer.toString(SelectedOwner.getId()));
+//        ODfn.setText(SelectedOwner.getFirstname());
+//        ODln.setText(SelectedOwner.getLastname());
+//        ODcontact.setText(SelectedOwner.getContact());
+//        ODlic.setText(SelectedOwner.getLic());
+//
+//
+//
+//    }
 
+    //TODO LOAD FUNCTION HELPERS
+//    private void boatDetailInstantiate(){
+//        if(SelectedBoat.equals(null))return;
+//
+//        loadBoatDetailText();
+//        loadExtendedDetail();
+//    }
 
-
-    }
-
-            //TODO LOAD FUNCTION HELPERS
-    private void boatDetailInstantiate(){
-                if(SelectedBoat.equals(null))return;
-
-                loadBoatDetailText();
-                loadExtendedDetail();
-            }
-
-    private void ownerDetailInstantiate(){
-        if(SelectedOwner.equals(null))return;
-
-        loadOwnerDetailText();
-        //loadExtendedDetail();
-    }
+//    private void ownerDetailInstantiate(){
+//        if(SelectedOwner.equals(null))return;
+//
+//        loadOwnerDetailText();
+//        //loadExtendedDetail();
+//    }
 
     private void loadExtendedDetail(){
         String id = SelectedBoat.getId();
@@ -527,8 +470,8 @@ public class boatSearchGUI extends GUI {
                 active = active || !p.isExpired();
             }
 
-            if(active)activePermit.setText("Has active permit");
-            else activePermit.setText("Has no active permit");
+            //if(active)activePermit.setText("Has active permit");
+            //else activePermit.setText("Has no active permit");
         }
 
 
@@ -536,22 +479,22 @@ public class boatSearchGUI extends GUI {
 
 
     //TODO EDIT INFO
-    private boolean editBoatDetails(){
-        try{
-
-            SelectedBoat.updateBoatDetails(modelDetails.getText(),Float.parseFloat(lenDetails.getText()),typeDetails.getText(),
-                    primDetails.getText(),detDetails.getText(),tarpDetails.getText(),Integer.parseInt(sailDetails.getText()),Integer.parseInt(mastDetails.getText()),
-                    descDetails.getText(),"","");
-
-            MiddleMan mm = new MiddleMan();
-            boolean worked = mm.updateBoatInfo(sql,SelectedBoat);
-            System.out.println(worked);
-        }
-        catch (Exception e){
-            System.out.println(e + " In GUI");
-        }
-        return false;
-    }
+//    private boolean editBoatDetails(){
+//        try{
+//
+//            SelectedBoat.updateBoatDetails(modelDetails.getText(),Float.parseFloat(lenDetails.getText()),typeDetails.getText(),
+//                    primDetails.getText(),detDetails.getText(),tarpDetails.getText(),Integer.parseInt(sailDetails.getText()),Integer.parseInt(mastDetails.getText()),
+//                    descDetails.getText(),"","");
+//
+//            MiddleMan mm = new MiddleMan();
+//            boolean worked = mm.updateBoatInfo(sql,SelectedBoat);
+//            System.out.println(worked);
+//        }
+//        catch (Exception e){
+//            System.out.println(e + " In GUI");
+//        }
+//        return false;
+//    }
 
 
 
@@ -581,91 +524,4 @@ public class boatSearchGUI extends GUI {
 
 
 
-
-
-
-
-
-    protected void Image(){
-
-        //C:\Users\Conno\AppData\Local\Programs\Java\BoatCopDB\src\img\p1.png
-
-        Toolkit tk = Toolkit.getDefaultToolkit();
-        Image I = tk.getImage("src/img/p1.png");
-        IMG.setIcon(new ImageIcon(new ImageIcon("C:\\Users\\Conno\\AppData\\Local\\Programs\\Java\\BoatCopDB\\src\\img\\p1.png").getImage().getScaledInstance(400,400,Image.SCALE_SMOOTH)));
-        //subMain.add(new JLabel(img));
-
-
-
-
-
-//        File imageFile = new File("src/img/p1.png");
-//        System.out.println(imageFile);
-//        imgIcon = new ImageIcon(imageFile.getAbsolutePath());
-//        IMG.setIcon(imgIcon);
-//        System.out.println(IMG);
-
-        //add(IMG);
-        //pack();
-        //String filename = "src/img/b1.png";
-        //imgIcon = new ImageIcon(imageFile.getAbsolutePath());
-//
-//        try{
-//            BufferedImage img = ImageIO.read(new File("src/img/b1.png"));
-//            System.out.println(img);
-//            Image dimg = img.getScaledInstance(IMG.getWidth(), IMG.getHeight(),
-//                    Image.SCALE_SMOOTH);
-//            imgIcon = new ImageIcon(dimg);
-//            IMG.setIcon(imgIcon);
-//        }
-//        catch (Exception e){
-//            System.out.println(e);
-//        }
-
-//
-
-            //imgIcon = new ImageIcon((new ImageIcon(new File("b1.png").getAbsolutePath()).getImage().getScaledInstance(25, 25, Image.SCALE_DEFAULT)));
-
-//        imgIcon = new ImageIcon();
-//
-//        System.out.println(imgIcon.getImage());
-        //IMG.setIcon(imgIcon);
-//        System.out.println(IMG);
-//        /add(IMG);
-        //setVisible(true);
-
-//        File imageFile = new File("src/img/b1.png");
-//        //String filename = "src/img/b1.png";
-//        imgIcon = new ImageIcon(imageFile.getAbsolutePath());
-//        System.out.println(imgIcon);
-//        IMG.setIcon(imgIcon);
-//        //pack();
-        //Img = new JLabel(icon);
-        //System.out.println(imageFile.getAbsolutePath());
-
-    }
-
-
-    private void createUIComponents() {
-        // TODO: place custom component creation code here''
-
-        //Toolkit tk = Toolkit.getDefaultToolkit();
-        //Image I = tk.getImage("src/img/p1.png");
-        //IMG = new JLabel(new ImageIcon("C:\\Users\\Conno\\AppData\\Local\\Programs\\Java\\BoatCopDB\\src\\img\\b1.png"));//.getImage().getScaledInstance(400,400,Image.SCALE_SMOOTH)));
-
-        //IMG = new JLabel();
-
-        //IMG.setIcon((new ImageIcon(getClass().getClassLoader().getResource("img/b1.png"))));
-        IMG = new JLabel();
-
-        ImageIcon img = new ImageIcon(new ImageIcon("C:\\Users\\Conno\\AppData\\Local\\Programs\\Java\\BoatCopDB\\src\\img\\b1.png").getImage().getScaledInstance(100,100,Image.SCALE_SMOOTH));
-        System.out.println(img);
-                IMG.setIcon(img);
-
-        System.out.println(IMG);
-
-        //subMain.add(new JLabel(img));
-        //pack();
-
-    }
 }

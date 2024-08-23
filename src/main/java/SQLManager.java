@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Random;
 
@@ -80,6 +81,7 @@ public class SQLManager {
         }
     }
 
+    //Get Notice based on BOATID and OWNERID
     public ResultSet getNoticeInfo(int ID, String BoatID, int OwnerID){
         try {
             String f = "SELECT * FROM notice WHERE ";
@@ -106,6 +108,36 @@ public class SQLManager {
             return null;
         }
     }
+
+    public ResultSet getNoticeInfo(String num, String ownID, String boatID, LocalDate Date, String G){
+        try{
+            String f = "SELECT * FROM notice WHERE ";
+
+            if (!num.isEmpty()) f += String.format("TRIM(LOWER(incidentnumber)) = (LOWER('%s')) AND ", num);
+            if (!ownID.isEmpty()) f += String.format("TRIM(LOWER(ownerid)) = (LOWER('%s')) AND ", ownID);
+            if (!boatID.isEmpty()) f += String.format("TRIM(LOWER(boatid)) = (LOWER('%s')) AND ", boatID);
+            if (Date != null) f += String.format("dateofissue = '%tF' AND ", Date);
+            if (!G.isEmpty()) f += String.format("grouptype = '%s' AND ", G);
+
+            // Remove the trailing " AND " if it exists
+            if (f.endsWith(" AND ")) {
+                f = f.substring(0, f.length() - 5);
+            }
+
+            System.out.println(f);
+
+            Statement s = con.createStatement();
+            s.executeQuery(f);
+            ResultSet r = s.getResultSet();
+            return r;
+
+        }
+        catch (Exception e){
+            System.out.println(e + " in getNoticeInfo (SQLMANAGER)");
+        }
+        return null;
+    }
+
 
     //Get a result set of permits assosiated with a boatID (Including Expired ones)
     public ResultSet getPermitHist(String ID){
@@ -375,12 +407,14 @@ public class SQLManager {
     public boolean newBoat(String HIN, String name, Information I){
         try{
             //MAKE MOST RANDOM POSSIBLE PRIMARY KEY
-            Random rand = new Random();
-            int r = rand.nextInt(1000);
-            String boatID = String.format("%s%s%s%d",HIN,name,new SimpleDateFormat("H-m-s-dd-MM-yyyy").format(new Date()),r);
+            //Random rand = new Random();
+            //int r = rand.nextInt(1000);
+            //String boatID = String.format("%s%s%s%d",HIN,name,new SimpleDateFormat("H-m-s-dd-MM-yyyy").format(new Date()),r);
+            //String hashID = DigestUtils.sha1Hex(boatID);
+            //System.out.println(boatID);
 
-            String hashID = DigestUtils.sha1Hex(boatID);
-            System.out.println(boatID);
+            String hashID = boatIDCreator(HIN,name);
+
             System.out.println(hashID);
 
 
@@ -436,6 +470,25 @@ public class SQLManager {
         }
         return false;
     }
+
+
+    private String boatIDCreator(String HIN, String name){
+
+
+        Random rand = new Random();
+        int r = rand.nextInt(1000);
+        String boatID = String.format("%s%s%s%d",HIN,name,new SimpleDateFormat("H-m-s-dd-MM-yyyy").format(new Date()),r);
+
+        String hashID = DigestUtils.md5Hex(boatID);
+        hashID = hashID.substring(0,6);
+        hashID = hashID.trim();
+
+        return hashID;
+
+    }
+
+
+
 
 
 
